@@ -4,7 +4,7 @@ let scene, camera, renderer;
 let posterTextures = [];
 let posterMeshes = [];
 let currentPosterIndex = 0;
-let leftArrow, rightArrow, bookButton;
+let leftArrow, rightArrow;
 
 const posters = [
   { image: 'assets/poster1.png', description: ["This is movie 1, line 1", "Line 2", "Line 3"] },
@@ -36,9 +36,8 @@ function init() {
     });
   });
 
-  // Create the arrows and booking button
+  // Create the arrows
   createArrows();
-  createBookButton();
 
   // Resize handling
   window.addEventListener('resize', onWindowResize, false);
@@ -86,15 +85,6 @@ function createArrows() {
   scene.add(rightArrow);
 }
 
-function createBookButton() {
-  const buttonGeometry = new THREE.PlaneGeometry(1, 0.5);
-  const buttonMaterial = new THREE.MeshBasicMaterial({ color: 0x0000ff });
-  bookButton = new THREE.Mesh(buttonGeometry, buttonMaterial);
-  bookButton.position.set(0, -2.5, 0);
-  bookButton.userData = { type: 'book' };
-  scene.add(bookButton);
-}
-
 function addDescription(index) {
   const loader = new THREE.FontLoader();
   loader.load('https://threejs.org/examples/fonts/helvetiker_regular.typeface.json', function (font) {
@@ -139,13 +129,11 @@ function onMouseClick(event) {
   const raycaster = new THREE.Raycaster();
   raycaster.setFromCamera(mouse, camera);
 
-  const intersects = raycaster.intersectObjects([leftArrow, rightArrow, bookButton]);
+  const intersects = raycaster.intersectObjects([leftArrow, rightArrow]);
 
   if (intersects.length > 0) {
     const object = intersects[0].object;
-    if (object.userData.type === 'book') {
-      window.location.href = 'https://yourbookingpage.com';
-    } else if (object.userData.direction) {
+    if (object.userData.direction) {
       if (object.userData.direction === 'left') {
         currentPosterIndex = (currentPosterIndex - 1 + posters.length) % posters.length;
       } else if (object.userData.direction === 'right') {
